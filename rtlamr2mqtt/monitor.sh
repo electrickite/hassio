@@ -6,8 +6,6 @@ if [ -d /usr/local/lib64 ]; then
   export LD_LIBRARY_PATH=/usr/local/lib64
 fi
 
-LOGPATH=/tmp/rtlamr.log
-
 CONFIG_PATH=/data/options.json
 MQTT_HOST="$(jq --raw-output '.mqtt_host' $CONFIG_PATH)"
 MQTT_USER="$(jq --raw-output '.mqtt_user' $CONFIG_PATH)"
@@ -30,16 +28,15 @@ echo "Interval =" $INTERVAL
 echo "Enable Log =" $ENABLE_LOG
 
 if [ "$ENABLE_LOG" = true ]; then
-  touch "$LOGPATH"
+  set -x
 else
-  rm -f "$LOGPATH"
+  ENABLE_LOG=""
 fi
 
 [ -n "$DEVICE_IDS" ] && filter_arg="-filterid=$DEVICE_IDS"
 [ -n "$DURATION" ] && [ $DURATION != "0" ] && duration_arg="-duration=$DURATIONs"
 [ -z "$INTERVAL" ] && INTERVAL=60
 
-#set -x  ## uncomment for MQTT logging...
 /usr/local/bin/rtl_tcp &>/dev/null &
 
 # Sleep to fill buffer a bit
@@ -59,11 +56,10 @@ do
   DEVICEID="$(echo $line | jq --raw-output '.Message.ID' | tr -s ' ' '_')"
   MQTT_PATH="readings/$DEVICEID/meter_reading"
 
-  # Create file with touch /tmp/rtlamr.log if logging is needed
-  [ -w "$LOGPATH" ] && echo "$line" >> "$LOGPATH"
+  [ -n "$ENABLE_LOG" ] && echo $line
   if [ "$VAL" != "$LASTVAL" ]; then
     echo $VAL | /usr/bin/mosquitto_pub -h "$MQTT_HOST" -u "$MQTT_USER" -P "$MQTT_PASS" -i RTLAMR -r -l -t "$MQTT_PATH"
-	LASTVAL=$VAL
+    LASTVAL=$VAL
   fi
 done
 
