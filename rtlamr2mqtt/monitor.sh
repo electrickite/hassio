@@ -10,8 +10,8 @@ fi
 
 CONFIG_PATH=/data/options.json
 MQTT_HOST="$(bashio::config 'mqtt_host')"
-MQTT_USER="$(bashio:config 'mqtt_user')"
-MQTT_PASS="$(bashio:config 'mqtt_password')"
+MQTT_USER="$(bashio::config 'mqtt_user')"
+MQTT_PASS="$(bashio::config 'mqtt_password')"
 MSGTYPE="$(bashio::config 'msgType')"
 DEVICE_IDS="$(bashio::config 'ids')"
 DURATION="$(bashio::config 'duration')"
