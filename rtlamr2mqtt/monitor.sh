@@ -1,22 +1,41 @@
-#!/bin/sh
+#!/usr/bin/with-contenv bashio
 export LANG=C
 PATH="/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
+LOG_DIR=/share/rtlamr2mqtt
+LOG_PATH=$LOG_DIR/output.log
 
 if [ -d /usr/local/lib64 ]; then
   export LD_LIBRARY_PATH=/usr/local/lib64
 fi
 
 CONFIG_PATH=/data/options.json
-MQTT_HOST="$(jq --raw-output '.mqtt_host' $CONFIG_PATH)"
-MQTT_USER="$(jq --raw-output '.mqtt_user' $CONFIG_PATH)"
-MQTT_PASS="$(jq --raw-output '.mqtt_password' $CONFIG_PATH)"
-MSGTYPE="$(jq --raw-output '.msgType' $CONFIG_PATH)"
-DEVICE_IDS="$(jq --raw-output '.ids' $CONFIG_PATH)"
-DURATION="$(jq --raw-output '.duration' $CONFIG_PATH)"
-INTERVAL="$(jq --raw-output '.interval' $CONFIG_PATH)"
-ENABLE_LOG="$(jq --raw-output '.log' $CONFIG_PATH)"
+MQTT_HOST="$(bashio::config 'mqtt_host')"
+MQTT_USER="$(bashio:config 'mqtt_user')"
+MQTT_PASS="$(bashio:config 'mqtt_password')"
+MSGTYPE="$(bashio::config 'msgType')"
+DEVICE_IDS="$(bashio::config 'ids')"
+DURATION="$(bashio::config 'duration')"
+INTERVAL="$(bashio::config 'interval')"
+ENABLE_LOG="$(bashio::config 'log')"
+LOG_FILE="$(bashio::config 'log_file')"
+
+[ -n "$DEVICE_IDS" ] && filter_arg="-filterid=$DEVICE_IDS"
+[ -n "$DURATION" ] && [ $DURATION != "0" ] && duration_arg="-duration=$DURATIONs"
+[ -z "$INTERVAL" ] && INTERVAL=60
+
+if [ "$ENABLE_LOG" = true ]; then
+  if [ "$LOG_FILE" = true]; then
+    mkdir -p $LOG_DIR
+    exec >> $LOG_PATH
+    exec 2>&1
+  fi
+else
+  quiet_arg="--quiet"
+  ENABLE_LOG=""
+fi
 
 # Start the listener and enter an endless loop
+date
 echo "Starting RTLAMR with parameters:"
 echo "MQTT Host =" $MQTT_HOST
 echo "MQTT User =" $MQTT_USER
@@ -26,15 +45,7 @@ echo "Device IDs =" $DEVICE_IDS
 echo "Duration =" $DURATION
 echo "Interval =" $INTERVAL
 echo "Enable Log =" $ENABLE_LOG
-
-if [ "$ENABLE_LOG" != true ]; then
-  quiet_arg="--quiet"
-  ENABLE_LOG=""
-fi
-
-[ -n "$DEVICE_IDS" ] && filter_arg="-filterid=$DEVICE_IDS"
-[ -n "$DURATION" ] && [ $DURATION != "0" ] && duration_arg="-duration=$DURATIONs"
-[ -z "$INTERVAL" ] && INTERVAL=60
+echo "Log to file =" $LOG_FILE
 
 /usr/local/bin/rtl_tcp &>/dev/null &
 

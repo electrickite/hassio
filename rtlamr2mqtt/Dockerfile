@@ -33,22 +33,17 @@ RUN apk add --no-cache --virtual build-deps alpine-sdk cmake git libusb-dev && \
     apk add --no-cache libusb mosquitto-clients jq coreutils wget make musl-dev go git gcc
 	
 # Configure Go
-ENV GOROOT /usr/lib/go
-ENV GOPATH /go
-ENV PATH /go/bin:$PATH
+ENV GOROOT=/usr/lib/go GOPATH=/go PATH=/go/bin:$PATH
 RUN mkdir -p ${GOPATH}/src ${GOPATH}/bin
 RUN go get github.com/bemasher/rtlamr
 
 # Copy the montor script into the container
-COPY monitor.sh /monitor.sh
-RUN chmod +x /monitor.sh
+COPY monitor.sh /
+RUN chmod a+x /monitor.sh
 
 # Define an environment variable
 # Use this variable when creating a container to specify the MQTT broker host.
-ENV MQTT_HOST="hassio.local"
-ENV MQTT_USER="guest"
-ENV MQTT_PASS="guest"
-ENV MQTT_TOPIC="homeassistant/sensor/rtlamr"
+ENV MQTT_HOST="hassio.local" MQTT_USER="guest" MQTT_PASS="guest" MQTT_TOPIC="homeassistant/sensor/rtlamr"
 
 WORKDIR /
-CMD cp -f /config/rtlamr2mqtt/monitor.sh /monitor.sh 2>/dev/null || : && chmod +x /monitor.sh && /monitor.sh
+CMD cp -f /config/rtlamr2mqtt/monitor.sh /monitor.sh 2>/dev/null || : && chmod a+x /monitor.sh && /monitor.sh

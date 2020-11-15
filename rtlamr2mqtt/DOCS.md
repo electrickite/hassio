@@ -55,6 +55,7 @@ ids: "1234,1235"
 duration: 0
 interval: 60
 log: false
+log_file: false
 ```
 
 **Note**: _This is just an example, don't copy and past it! Create your own!_
@@ -78,7 +79,8 @@ for details.
 
 ### Option: `ids`
 
-Comma separated list of meter ID numbers to record.
+Comma separated list of meter ID numbers to record. An empty string will
+record all meters detected.
 
 ### Option: `duration`
 
@@ -91,6 +93,11 @@ Number of seconds to pause between rtlamr scans.
 ### Option: `log`
 
 Set to `true` to enable logging of rtlamr output.
+
+### Option: `log_file`
+
+If `log` is true, setting `log_file` to true will redirect log output to
+`/share/rtlamr2mqtt/output.log`
 
 ## Hardware
 
