@@ -24,7 +24,7 @@ LOG_FILE="$(bashio::config 'log_file')"
 [ -z "$INTERVAL" ] && INTERVAL=60
 
 if [ "$ENABLE_LOG" = true ]; then
-  if [ "$LOG_FILE" = true]; then
+  if [ "$LOG_FILE" = true ]; then
     mkdir -p $LOG_DIR
     exec >> $LOG_PATH
     exec 2>&1
@@ -40,7 +40,7 @@ echo "Starting RTLAMR with parameters:"
 echo "MQTT Host =" $MQTT_HOST
 echo "MQTT User =" $MQTT_USER
 echo "MQTT Password =" $MQTT_PASS
-echo "Message Type =" $MQTT_MSGTYPE
+echo "Message Type =" $MSGTYPE
 echo "Device IDs =" $DEVICE_IDS
 echo "Duration =" $DURATION
 echo "Interval =" $INTERVAL
