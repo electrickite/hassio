@@ -19,6 +19,10 @@ INTERVAL="$(bashio::config 'interval')"
 ENABLE_LOG="$(bashio::config 'log')"
 LOG_FILE="$(bashio::config 'log_file')"
 
+filter_arg=""
+duration_arg=""
+quiet_arg=""
+
 [ -n "$DEVICE_IDS" ] && filter_arg="-filterid=$DEVICE_IDS"
 [ -n "$DURATION" ] && [ $DURATION != "0" ] && duration_arg="-duration=$DURATIONs"
 [ -z "$INTERVAL" ] && INTERVAL=60
