@@ -35,8 +35,9 @@ else
   rm -f "$LOGPATH"
 fi
 
+[ -n "$DEVICE_IDS" ] && filter_arg="-filterid=$DEVICE_IDS"
 [ -n "$DURATION" ] && [ $DURATION != "0" ] && duration_arg="-duration=$DURATIONs"
-[ -n "$INTERVAL" ] && INTERVAL=60
+[ -z "$INTERVAL" ] && INTERVAL=60
 
 #set -x  ## uncomment for MQTT logging...
 /usr/local/bin/rtl_tcp &>/dev/null &
@@ -51,7 +52,7 @@ LASTVAL="0"
 # Do this loop, so will restart if buffer runs out
 while true; do 
 
-/go/bin/rtlamr -format json -msgtype="$MSGTYPE" -filterid="$DEVICE_IDS" $duration_arg | while read line
+/go/bin/rtlamr -format json -msgtype="$MSGTYPE" $filter_arg $duration_arg | while read line
 
 do
   VAL="$(echo $line | jq --raw-output '.Message.Consumption' | tr -s ' ' '_')" # replace ' ' with '_'
