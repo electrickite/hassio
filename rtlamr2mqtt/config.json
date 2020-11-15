@@ -1,13 +1,13 @@
 {
   "name": "rtlamr2mqtt",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "slug": "rtlamr2mqtt",
   "description": "RF utility meter readings to MQTT bridge based on RTLAMR",
   "startup": "before",
   "boot": "auto",
   "map": ["config", "share:rw"],
   "url": "https://github.com/electrickite/hassio/tree/master/rtlamr2mqtt",
-  "usb": true,
+  "devices": ["/dev/bus/usb:/dev/bus/usb:rwm"],
   "host_network": false,
   "arch": [
     "aarch64",
