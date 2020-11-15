@@ -1,6 +1,6 @@
 {
   "name": "rtlamr2mqtt",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "slug": "rtlamr2mqtt",
   "description": "RF utility meter readings to MQTT bridge based on RTLAMR",
   "startup": "before",

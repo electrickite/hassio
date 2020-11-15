@@ -53,6 +53,9 @@ echo "Log to file =" $LOG_FILE
 
 /usr/local/bin/rtl_tcp &>/dev/null &
 
+# Disable exit on error for monitor loop
+set +e
+
 # Sleep to fill buffer a bit
 sleep 15
 
