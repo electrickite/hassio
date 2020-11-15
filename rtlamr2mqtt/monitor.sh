@@ -27,9 +27,8 @@ echo "Duration =" $DURATION
 echo "Interval =" $INTERVAL
 echo "Enable Log =" $ENABLE_LOG
 
-if [ "$ENABLE_LOG" = true ]; then
-  set -x
-else
+if [ "$ENABLE_LOG" != true ]; then
+  quiet_arg="--quiet"
   ENABLE_LOG=""
 fi
 
@@ -44,8 +43,6 @@ sleep 15
 
 LASTVAL="0"
 
-# set a time to listen for. Set to 0 for unliminted
-
 # Do this loop, so will restart if buffer runs out
 while true; do 
 
@@ -58,7 +55,7 @@ do
 
   [ -n "$ENABLE_LOG" ] && echo $line
   if [ "$VAL" != "$LASTVAL" ]; then
-    echo $VAL | /usr/bin/mosquitto_pub -h "$MQTT_HOST" -u "$MQTT_USER" -P "$MQTT_PASS" -i RTLAMR -r -l -t "$MQTT_PATH"
+    echo $VAL | /usr/bin/mosquitto_pub $quiet_arg -h "$MQTT_HOST" -u "$MQTT_USER" -P "$MQTT_PASS" -i RTLAMR -r -l -t "$MQTT_PATH"
     LASTVAL=$VAL
   fi
 done
