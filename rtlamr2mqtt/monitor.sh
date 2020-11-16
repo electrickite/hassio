@@ -27,7 +27,7 @@ quiet_arg=""
 
 [ -n "$DEVICE_IDS" ] && filter_arg="-filterid=$DEVICE_IDS"
 [ "$SINGLE" != true ] && SINGLE=false
-[ -n "$DURATION" ] && [ $DURATION != "0" ] && duration_arg="-duration=$DURATIONs"
+[ -n "$DURATION" ] && [ "$DURATION" != "0" ] && duration_arg="-duration=${DURATION}s"
 [ -z "$INTERVAL" ] && INTERVAL=60
 
 if [ "$ENABLE_LOG" = true ]; then
