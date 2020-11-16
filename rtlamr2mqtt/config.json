@@ -1,11 +1,11 @@
 {
   "name": "rtlamr2mqtt",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "slug": "rtlamr2mqtt",
   "description": "RF utility meter readings to MQTT bridge based on RTLAMR",
   "startup": "before",
   "boot": "auto",
-  "map": ["config", "share:rw"],
+  "map": ["config", "ssl", "share:rw"],
   "url": "https://github.com/electrickite/hassio/tree/master/rtlamr2mqtt",
   "devices": ["/dev/bus/usb:/dev/bus/usb:rwm"],
   "host_network": false,
@@ -18,6 +18,7 @@
   "options": {
     "mqtt_host": "hassio.local",
     "mqtt_port": 1883,
+    "mqtt_cacert": "",
     "mqtt_user": "",
     "mqtt_password": "",
     "msgType": "scm",
@@ -31,6 +32,7 @@
   "schema": {
     "mqtt_host": "str",
     "mqtt_port": "int",
+    "mqtt_cacert": "str",
     "mqtt_user": "str",
     "mqtt_password": "str",
     "msgType": "str",

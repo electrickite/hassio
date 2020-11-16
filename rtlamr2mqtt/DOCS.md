@@ -48,6 +48,8 @@ Example add-on configuration:
 
 ```yaml
 mqtt_host: "hassio.local"
+mqtt_port: 1883
+mqtt_cacert: cacert.pem
 mqtt_user: "myuser"
 mqtt_password: "mypass"
 msgType: "scm"
@@ -62,11 +64,16 @@ log_file: false
 
 ### Option: `mqtt_host`
 
-Hostname of MQTT server.
+Hostname of MQTT broker.
 
 ### Option: `mqtt_port`
 
-MQTT server port number.
+MQTT broker port number.
+
+### Option: `mqtt_cacert`
+
+CA certificate file for the MQTT broker. Required to use TLS connections.
+The filename is relative to the shared `/ssl` directory.
 
 ### Option: `mqtt_user`
 

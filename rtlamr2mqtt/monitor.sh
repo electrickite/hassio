@@ -3,6 +3,7 @@ export LANG=C
 PATH="/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
 LOG_DIR=/share/rtlamr2mqtt
 LOG_PATH=$LOG_DIR/output.log
+SSL_PATH=/ssl
 
 if [ -d /usr/local/lib64 ]; then
   export LD_LIBRARY_PATH=/usr/local/lib64
@@ -11,6 +12,7 @@ fi
 CONFIG_PATH=/data/options.json
 MQTT_HOST="$(bashio::config 'mqtt_host')"
 MQTT_PORT="$(bashio::config 'mqtt_port')"
+MQTT_CACERT="$(bashio::config 'mqtt_cacert')"
 MQTT_USER="$(bashio::config 'mqtt_user')"
 MQTT_PASS="$(bashio::config 'mqtt_password')"
 MSGTYPE="$(bashio::config 'msgType')"
@@ -24,7 +26,9 @@ LOG_FILE="$(bashio::config 'log_file')"
 filter_arg=""
 duration_arg=""
 quiet_arg=""
+cafile_arg=""
 
+[ -n "$MQTT_CACERT" ] && cafile_arg="--cafile ${SSL_PATH}/${MQTT_CACERT}"
 [ -n "$DEVICE_IDS" ] && filter_arg="-filterid=$DEVICE_IDS"
 [ "$SINGLE" != true ] && SINGLE=false
 [ -n "$DURATION" ] && [ "$DURATION" != "0" ] && duration_arg="-duration=${DURATION}s"
@@ -46,6 +50,7 @@ date
 echo "Starting RTLAMR with parameters:"
 echo "MQTT Host =" $MQTT_HOST
 echo "MQTT Port =" $MQTT_PORT
+echo "MQTT CA Cert =" $MQTT_CACERT
 echo "MQTT User =" $MQTT_USER
 echo "MQTT Password =" $MQTT_PASS
 echo "Message Type =" $MSGTYPE
@@ -78,7 +83,7 @@ do
 
   [ -n "$ENABLE_LOG" ] && echo $line
   if [ "$VAL" != "$LASTVAL" ]; then
-    echo $VAL | /usr/bin/mosquitto_pub $quiet_arg -h "$MQTT_HOST" -p "$MQTT_PORT" -u "$MQTT_USER" -P "$MQTT_PASS" -i RTLAMR -r -l -t "$MQTT_PATH"
+    echo $VAL | /usr/bin/mosquitto_pub $quiet_arg -h "$MQTT_HOST" -p "$MQTT_PORT" -u "$MQTT_USER" -P "$MQTT_PASS" $cafile_arg -i RTLAMR -r -l -t "$MQTT_PATH"
     LASTVAL=$VAL
   fi
 done
