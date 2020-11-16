@@ -10,10 +10,12 @@ fi
 
 CONFIG_PATH=/data/options.json
 MQTT_HOST="$(bashio::config 'mqtt_host')"
+MQTT_PORT="$(bashio::config 'mqtt_port')"
 MQTT_USER="$(bashio::config 'mqtt_user')"
 MQTT_PASS="$(bashio::config 'mqtt_password')"
 MSGTYPE="$(bashio::config 'msgType')"
 DEVICE_IDS="$(bashio::config 'ids')"
+SINGLE="$(bashio::config 'single')"
 DURATION="$(bashio::config 'duration')"
 INTERVAL="$(bashio::config 'interval')"
 ENABLE_LOG="$(bashio::config 'log')"
@@ -24,6 +26,7 @@ duration_arg=""
 quiet_arg=""
 
 [ -n "$DEVICE_IDS" ] && filter_arg="-filterid=$DEVICE_IDS"
+[ "$SINGLE" != true ] && SINGLE=false
 [ -n "$DURATION" ] && [ $DURATION != "0" ] && duration_arg="-duration=$DURATIONs"
 [ -z "$INTERVAL" ] && INTERVAL=60
 
@@ -42,10 +45,12 @@ fi
 date
 echo "Starting RTLAMR with parameters:"
 echo "MQTT Host =" $MQTT_HOST
+echo "MQTT Port =" $MQTT_PORT
 echo "MQTT User =" $MQTT_USER
 echo "MQTT Password =" $MQTT_PASS
 echo "Message Type =" $MSGTYPE
 echo "Device IDs =" $DEVICE_IDS
+echo "Single reading =" $SINGLE
 echo "Duration =" $DURATION
 echo "Interval =" $INTERVAL
 echo "Enable Log =" $ENABLE_LOG
@@ -64,7 +69,7 @@ LASTVAL="0"
 # Do this loop, so will restart if buffer runs out
 while true; do 
 
-/go/bin/rtlamr -format json -msgtype="$MSGTYPE" $filter_arg $duration_arg | while read line
+/go/bin/rtlamr -format json -msgtype="$MSGTYPE" $filter_arg $duration_arg -single="$SINGLE" | while read line
 
 do
   VAL="$(echo $line | jq --raw-output '.Message.Consumption' | tr -s ' ' '_')" # replace ' ' with '_'
@@ -73,7 +78,7 @@ do
 
   [ -n "$ENABLE_LOG" ] && echo $line
   if [ "$VAL" != "$LASTVAL" ]; then
-    echo $VAL | /usr/bin/mosquitto_pub $quiet_arg -h "$MQTT_HOST" -u "$MQTT_USER" -P "$MQTT_PASS" -i RTLAMR -r -l -t "$MQTT_PATH"
+    echo $VAL | /usr/bin/mosquitto_pub $quiet_arg -h "$MQTT_HOST" -p "$MQTT_PORT" -u "$MQTT_USER" -P "$MQTT_PASS" -i RTLAMR -r -l -t "$MQTT_PATH"
     LASTVAL=$VAL
   fi
 done

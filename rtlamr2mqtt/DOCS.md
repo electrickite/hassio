@@ -64,6 +64,10 @@ log_file: false
 
 Hostname of MQTT server.
 
+### Option: `mqtt_port`
+
+MQTT server port number.
+
 ### Option: `mqtt_user`
 
 MQTT username, if needed.
@@ -81,6 +85,10 @@ for details.
 
 Comma separated list of meter ID numbers to record. An empty string will
 record all meters detected.
+
+### Option: `single`
+
+Set to `true` to register only a single reading per meter for each interval.
 
 ### Option: `duration`
 

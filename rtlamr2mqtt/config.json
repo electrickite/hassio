@@ -1,6 +1,6 @@
 {
   "name": "rtlamr2mqtt",
-  "version": "0.6.5",
+  "version": "0.7.0",
   "slug": "rtlamr2mqtt",
   "description": "RF utility meter readings to MQTT bridge based on RTLAMR",
   "startup": "before",
@@ -17,10 +17,12 @@
   ],
   "options": {
     "mqtt_host": "hassio.local",
+    "mqtt_port": 1883,
     "mqtt_user": "",
     "mqtt_password": "",
     "msgType": "scm",
     "ids": "1234,1235",
+    "single": false,
     "duration": 0,
     "interval": 60,
     "log": false,
@@ -28,10 +30,12 @@
   },
   "schema": {
     "mqtt_host": "str",
+    "mqtt_port": "int",
     "mqtt_user": "str",
     "mqtt_password": "str",
     "msgType": "str",
     "ids":"str",
+    "single":"bool",
     "duration":"int",
     "interval":"int",
     "log":"bool",
